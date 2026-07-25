@@ -9,8 +9,7 @@
  *   site.url                  real domain (drives canonical + OG tags)
  *   site.contactEmail         real inbox
  *   product.tagline           the real one-line promise
- *   product.priceUSD          the real price
- *   product.gumroadUrl        the real Gumroad product link
+ *   product.priceUSD          the real price — must match Gumroad exactly
  *   product.includes          the real contents of the vault
  *   product.requiredPlugins   the real plugin list
  *   product.obsidianMinVersion  the real minimum version you have tested
@@ -128,8 +127,10 @@ export const products: Product[] = [
     name: 'Second Draft',
     tagline:
       'An opinionated Obsidian vault that moves an idea from a stray note to a finished piece.', // TODO: real tagline
-    priceUSD: 29, // TODO: real price
-    gumroadUrl: 'https://gumroad.com/l/TODO-second-draft', // TODO: real Gumroad link
+    // TODO: must match the price on the Gumroad page exactly. This number is
+    // only what the site advertises; Gumroad is what actually charges.
+    priceUSD: 29,
+    gumroadUrl: 'https://roadkillhamster.gumroad.com/l/vhkzh',
     demoVideo: '/demo.mp4',
     demoPoster: '/demo-poster.webp',
     demoWidth: 1600,
