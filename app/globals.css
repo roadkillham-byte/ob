@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens — "Source and Render".
+ * Every colour, face and measure on the site derives from this block.
+ */
+@theme {
+  /* Palette. Two accents only: the colour a wikilink renders as, and a
+     highlighter. Those are the two colours a markdown editor gives you. */
+  --color-obsidian: #1b1a22; /* body text, footer ground */
+  --color-paper: #ededf1; /* page ground */
+  --color-vellum: #f9f9fb; /* raised surfaces */
+  --color-wikilink: #4f3fcf; /* links, CTAs — 6.0:1 on paper */
+  --color-syntax: #635f7c; /* gutter tokens, metadata — 5.1:1 on paper */
+  --color-mark: #e9e3a8; /* ==highlight==, one phrase per section */
+
+  /* Type. Monospace carries the voice; the serif carries the reading. */
+  --font-display: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+  --font-body: var(--font-literata), Georgia, 'Times New Roman', serif;
+
+  /* The display face appears at exactly three sizes. */
+  --text-hero: clamp(2.5rem, 1.1rem + 5vw, 3.5rem);
+  --text-hero--line-height: 1.04;
+  --text-hero--letter-spacing: -0.03em;
+  --text-section: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
+  --text-section--line-height: 1.15;
+  --text-section--letter-spacing: -0.02em;
+  --text-price: clamp(2rem, 1.5rem + 2vw, 2.5rem);
+  --text-price--line-height: 1;
+
+  /* Measure. The gutter hangs outside the reading column. */
+  --container-column: 68ch;
+}
+
+/* Width of the hanging syntax gutter, and the page container derived from it. */
+:root {
+  --gutter: 6.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-obsidian);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* One focus treatment, applied everywhere, never removed. */
+:focus-visible {
+  outline: 2px solid var(--color-wikilink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
