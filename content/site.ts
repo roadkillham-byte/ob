@@ -8,7 +8,6 @@
  *
  *   site.url                  real domain (drives canonical + OG tags)
  *   site.contactEmail         real inbox
- *   site.buttondownUsername   real Buttondown username
  *   product.tagline           the real one-line promise
  *   product.priceUSD          the real price
  *   product.gumroadUrl        the real Gumroad product link
@@ -76,7 +75,7 @@ export const site: Site = {
   ogImage: '/og.png',
   fileName: 'second-draft.md',
   contactEmail: 'hello@second-draft.example.com', // TODO: real inbox
-  buttondownUsername: 'second-draft', // TODO: real Buttondown username
+  buttondownUsername: 'roadkillham',
   refundPolicy:
     'Refunds within 14 days, no questions asked. Email me and I will send the money back.',
   footerLicence: 'One licence per person. Use it in as many vaults as you like.',
