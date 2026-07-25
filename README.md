@@ -49,7 +49,9 @@ contain no hardcoded strings. Adding a second product means adding an entry to
 
 `content/site.ts` is marked with `TODO` at each one:
 
-- `site.url` — real domain, drives canonical and OG tags
+- `site.url` — currently the Vercel deployment URL. Swap for the custom domain
+  when there is one; it drives canonical, `metadataBase` and the OG/Twitter tags,
+  and must always match wherever the site actually serves from.
 - `site.contactEmail`
 - `site.buttondownUsername` — the email form posts straight to Buttondown, no
   route handler and no JavaScript

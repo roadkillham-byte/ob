@@ -65,7 +65,11 @@ export interface Site {
 }
 
 export const site: Site = {
-  url: 'https://second-draft.example.com', // TODO: real domain
+  // TODO: swap for the custom domain when there is one. Until then this must
+  // match the live deployment — a canonical pointing at a domain that does not
+  // resolve tells search engines the real page is somewhere else, and every
+  // OG/Twitter card resolves against it.
+  url: 'https://ob-beta.vercel.app',
   title: 'Second Draft — an Obsidian vault template for finishing what you start',
   description:
     'A pre-built Obsidian vault that turns scattered notes into finished writing. Opinionated structure, working Dataview queries, no setup afternoon.',
