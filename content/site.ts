@@ -9,9 +9,10 @@
  *
  * TODO — still placeholder:
  *   site.url            swap for the custom domain when there is one
- *   site.contactEmail   the vault's README has the same gap ([YOUR EMAIL])
- *   site.refundPolicy   README says "[NUMBER] days" — the two must agree
- *   product.demoVideo   placeholder capture in /public
+ *   product.demoVideo   placeholder capture in /public, and demoDuration with it
+ *
+ * The refund window and contact address here must stay in step with the vault's
+ * own READ ME FIRST, which states both to the buyer.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -70,11 +71,10 @@ export const site: Site = {
     'A pre-built Obsidian vault for HSC students. A mistake journal, a past paper log and five live dashboards, all running on core plugins. 60 notes, no setup afternoon.',
   ogImage: '/og.png',
   fileName: 'hsc-vault.md',
-  contactEmail: 'hello@example.com', // TODO: real inbox — README has the same gap
+  contactEmail: 'Obisam123@proton.me',
   buttondownUsername: 'roadkillham',
-  // TODO: the vault's README says "[NUMBER] days". Make the two agree.
   refundPolicy:
-    'Refunds within 14 days. Email me — no form to fill in. If it is a technical problem, try me first: most take one message to fix.',
+    'Refunds within 30 days. Email me — no form to fill in. If it is a technical problem, try me first: most take one message to fix.',
   footerLicence:
     'One licence, one person. Use it, change it, delete what you do not need, keep it forever.',
 };
