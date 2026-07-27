@@ -3,19 +3,15 @@
  * Components read from it and contain no hardcoded strings.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * TODO — PLACEHOLDER VALUES. Replace before this site goes near a real visitor.
- * Each one is marked `TODO` inline as well.
+ * Content here is drawn from the shipped vault itself — its READ ME FIRST,
+ * START HERE and "Setting up Obsidian" notes, and its .obsidian config. Nothing
+ * below is invented. If the vault changes, change this file to match.
  *
- *   site.url                  real domain (drives canonical + OG tags)
- *   site.contactEmail         real inbox
- *   product.tagline           the real one-line promise
- *   product.priceUSD          the real price — must match Gumroad exactly
- *   product.includes          the real contents of the vault
- *   product.requiredPlugins   the real plugin list
- *   product.obsidianMinVersion  the real minimum version you have tested
- *   product.demoVideo/Poster  real screen capture (placeholders ship in /public)
- *
- * Adding a second product means adding an entry to `products` and nothing else.
+ * TODO — still placeholder:
+ *   site.url            swap for the custom domain when there is one
+ *   site.contactEmail   the vault's README has the same gap ([YOUR EMAIL])
+ *   site.refundPolicy   README says "[NUMBER] days" — the two must agree
+ *   product.demoVideo   placeholder capture in /public
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -35,7 +31,10 @@ export interface Product {
   /** Human-readable running time, shown in the caption. */
   demoDuration: string;
   includes: string[];
+  /** Core plugins the vault depends on. These ship enabled. */
   requiredPlugins: string[];
+  /** Community plugins that help but are not needed. Nothing breaks without. */
+  optionalPlugins: string[];
   obsidianMinVersion: string;
   /** Licence terms, in plain language. One string per line. */
   licence: string[];
@@ -63,29 +62,29 @@ export interface Site {
 }
 
 export const site: Site = {
-  // TODO: swap for the custom domain when there is one. Until then this must
-  // match the live deployment — a canonical pointing at a domain that does not
-  // resolve tells search engines the real page is somewhere else, and every
-  // OG/Twitter card resolves against it.
+  // TODO: swap for the custom domain when there is one. Must always match
+  // wherever the site actually serves from — canonical and OG resolve against it.
   url: 'https://ob-beta.vercel.app',
-  title: 'Second Draft — an Obsidian vault template for finishing what you start',
+  title: 'HSC Vault — an Obsidian study system built on the marks you lose',
   description:
-    'A pre-built Obsidian vault that turns scattered notes into finished writing. Opinionated structure, working Dataview queries, no setup afternoon.',
+    'A pre-built Obsidian vault for HSC students. A mistake journal, a past paper log and five live dashboards, all running on core plugins. 60 notes, no setup afternoon.',
   ogImage: '/og.png',
-  fileName: 'second-draft.md',
-  contactEmail: 'hello@second-draft.example.com', // TODO: real inbox
+  fileName: 'hsc-vault.md',
+  contactEmail: 'hello@example.com', // TODO: real inbox — README has the same gap
   buttondownUsername: 'roadkillham',
+  // TODO: the vault's README says "[NUMBER] days". Make the two agree.
   refundPolicy:
-    'Refunds within 14 days, no questions asked. Email me and I will send the money back.',
-  footerLicence: 'One licence per person. Use it in as many vaults as you like.',
+    'Refunds within 14 days. Email me — no form to fill in. If it is a technical problem, try me first: most take one message to fix.',
+  footerLicence:
+    'One licence, one person. Use it, change it, delete what you do not need, keep it forever.',
 };
 
 export const hero = {
   /** Split so the marked phrase can be highlighted without HTML in the copy. */
-  headlineLead: 'Second',
-  headlineRest: 'Draft',
-  subheadLead: 'A pre-built Obsidian vault for people whose notes are ',
-  subheadMark: 'full of unfinished writing.',
+  headlineLead: 'HSC',
+  headlineRest: 'Vault',
+  subheadLead: 'An Obsidian study system built on one idea: ',
+  subheadMark: 'the marks you lose are more useful than the marks you get.',
   subheadRest: '',
   primaryCta: 'Buy — $',
   secondaryCta: 'Watch the demo',
@@ -105,12 +104,18 @@ export const sections: Record<
 export const copy = {
   demoCaption: 'No sound. Nothing sped up.',
   requirementsNote:
-    'Without these plugins the dashboards render as empty code blocks. The notes themselves are plain markdown and will always open anywhere.',
+    'The dashboards use Bases, a core plugin that arrived in Obsidian 1.9. On anything older every note still opens — only the dashboard files will not. Nothing here needs a community plugin, and the vault ships with its core plugin settings already configured.',
   requirementsObsidianKey: 'obsidian',
-  requirementsPluginsKey: 'plugins',
+  requirementsPluginsKey: 'core_plugins',
+  requirementsPluginsComment: 'ship enabled',
+  requirementsCommunityKey: 'community_plugins',
+  requirementsCommunityValue: 'none required',
+  requirementsOptionalKey: 'optional',
+  requirementsOptionalComment: 'faster capture, nothing breaks without it',
   buyPriceSuffix: 'one-time',
-  buyCta: 'Get Second Draft on Gumroad',
-  buyNote: 'Checkout is handled by Gumroad. You get the vault as a .zip, immediately.',
+  buyCta: 'Get the HSC Vault on Gumroad',
+  buyNote:
+    'Checkout is handled by Gumroad. You get the vault as a .zip, immediately. Buy once, updates free.',
   emailLabel: 'Email address',
   emailPlaceholder: 'you@example.com',
   emailButton: 'Subscribe',
@@ -123,13 +128,11 @@ export const copy = {
 
 export const products: Product[] = [
   {
-    id: 'second-draft',
-    name: 'Second Draft',
+    id: 'hsc-vault',
+    name: 'HSC Vault',
     tagline:
-      'An opinionated Obsidian vault that moves an idea from a stray note to a finished piece.', // TODO: real tagline
-    // TODO: must match the price on the Gumroad page exactly. This number is
-    // only what the site advertises; Gumroad is what actually charges.
-    priceUSD: 29,
+      'A study system, not a note dump. Most students revise by re-reading what they already understand; this vault makes you revise what you got wrong.',
+    priceUSD: 10,
     gumroadUrl: 'https://roadkillhamster.gumroad.com/l/vhkzh',
     demoVideo: '/demo.mp4',
     demoPoster: '/demo-poster.webp',
@@ -137,19 +140,23 @@ export const products: Product[] = [
     demoHeight: 900,
     demoDuration: '1:40',
     includes: [
-      // TODO: replace with the real contents of the vault
-      'A structured vault: inbox, drafts, sources, published',
-      'Daily and weekly note templates wired to the drafting workflow',
-      'A Dataview dashboard showing every draft and where it is stuck',
-      'A source-capture template with citation fields',
-      'Twelve prompts for turning a note into an outline',
-      'A written walkthrough of the workflow the vault assumes',
+      '60 notes, 5 dashboards and a worked Chemistry example to copy from',
+      'A mistake journal — one note per mistake, not per topic. This is the core of it.',
+      'A past paper log, broken down question by question and linked to the mistakes each paper exposed',
+      'An assessment schedule with weightings, dates, marks and what you would do differently',
+      'Five live dashboards: mistakes, topics, past papers, assessments, review due',
+      '12 note templates, plus 5 Templater versions of the capture templates',
+      '8 exam technique notes: directive verbs, mark allocation, time allocation, the trap register',
+      'Subject hubs for English, Mathematics, Biology, Chemistry and Business Studies',
+      'A setup guide and a twenty-minute START HERE walkthrough',
     ],
-    requiredPlugins: ['dataview', 'templater'], // TODO: real plugin list
-    obsidianMinVersion: '1.5.0', // TODO: version you have actually tested
+    requiredPlugins: ['bases', 'templates', 'daily notes'],
+    optionalPlugins: ['templater'],
+    obsidianMinVersion: '1.9',
     licence: [
-      'Yours to keep and to edit however you want.',
-      'Please do not resell or redistribute the vault itself.',
+      'One licence, one person. Use it, change it, delete what you do not need, keep it forever.',
+      'Please do not resell it, share the files, or post it anywhere public. It is a small operation and that genuinely matters.',
+      'Everything is plain markdown on your own computer. Nothing is locked, nothing expires, nothing phones home.',
     ],
   },
 ];

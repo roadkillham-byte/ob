@@ -2,8 +2,8 @@ import { Section, SectionHeading } from '@/components/Section';
 import { copy, product, sections } from '@/content/site';
 
 /**
- * Rendered as a YAML frontmatter block, because that is how a vault template
- * actually declares what it depends on.
+ * Rendered as a YAML frontmatter block, because that is how a vault declares
+ * what it depends on.
  */
 export function Requirements() {
   return (
@@ -16,9 +16,27 @@ export function Requirements() {
           {'\n'}
           <span className="text-syntax">{copy.requirementsObsidianKey}:</span>{' '}
           &quot;&gt;= {product.obsidianMinVersion}&quot;{'\n'}
-          <span className="text-syntax">{copy.requirementsPluginsKey}:</span>
+          <span className="text-syntax">{copy.requirementsPluginsKey}:</span>{' '}
+          <span className="text-syntax">
+            # {copy.requirementsPluginsComment}
+          </span>
           {'\n'}
           {product.requiredPlugins.map((plugin) => (
+            <span key={plugin}>
+              {'  '}
+              <span className="text-syntax">-</span> {plugin}
+              {'\n'}
+            </span>
+          ))}
+          <span className="text-syntax">{copy.requirementsCommunityKey}:</span>{' '}
+          {copy.requirementsCommunityValue}
+          {'\n'}
+          <span className="text-syntax">{copy.requirementsOptionalKey}:</span>{' '}
+          <span className="text-syntax">
+            # {copy.requirementsOptionalComment}
+          </span>
+          {'\n'}
+          {product.optionalPlugins.map((plugin) => (
             <span key={plugin}>
               {'  '}
               <span className="text-syntax">-</span> {plugin}
