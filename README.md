@@ -1,7 +1,12 @@
-# Second Draft — storefront
+# HSC Vault — storefront
 
-Single-page marketing site for an Obsidian vault template. Checkout is Gumroad's;
-this repo is the storefront only. Every route is generated at build time.
+Single-page marketing site for the HSC Vault, an Obsidian study system. Checkout
+is Gumroad's; this repo is the storefront only. Every route is generated at
+build time.
+
+Product facts on the page — Obsidian version, plugins, contents — are drawn from
+the shipped vault's own notes. If the vault changes, `content/site.ts` has to
+change with it.
 
 ```bash
 npm install
@@ -52,14 +57,16 @@ contain no hardcoded strings. Adding a second product means adding an entry to
 - `site.url` — currently the Vercel deployment URL. Swap for the custom domain
   when there is one; it drives canonical, `metadataBase` and the OG/Twitter tags,
   and must always match wherever the site actually serves from.
-- `site.contactEmail`
-- `site.buttondownUsername` — the email form posts straight to Buttondown, no
-  route handler and no JavaScript
-- `product.tagline`, `product.priceUSD`, `product.gumroadUrl`
-- `product.includes`, `product.requiredPlugins`, `product.obsidianMinVersion`
+- `site.contactEmail` — the vault's own README has the same gap (`[YOUR EMAIL]`)
+- `site.refundPolicy` — the vault's README says `[NUMBER] days`, the site says
+  14. The two must agree before anyone buys.
 - `public/demo.mp4` and `public/demo-poster.webp` — placeholders at 1600×900.
   Replace both, and update `demoWidth`/`demoHeight`/`demoDuration` if the real
   capture differs.
+
+Already real: the Buttondown username, the Gumroad link, the price, and every
+product fact in `includes[]`, `requiredPlugins`, `optionalPlugins` and
+`obsidianMinVersion`.
 
 `public/og.png` is generated at 1200×630 and matches the palette; regenerate it
 if the name or tagline changes.
