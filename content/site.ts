@@ -9,7 +9,6 @@
  *
  * TODO — still placeholder:
  *   site.url            swap for the custom domain when there is one
- *   product.demoVideo   placeholder capture in /public, and demoDuration with it
  *
  * The refund window and contact address here must stay in step with the vault's
  * own READ ME FIRST, which states both to the buyer.
@@ -136,9 +135,9 @@ export const products: Product[] = [
     gumroadUrl: 'https://roadkillhamster.gumroad.com/l/vhkzh',
     demoVideo: '/demo.mp4',
     demoPoster: '/demo-poster.webp',
-    demoWidth: 1600,
-    demoHeight: 900,
-    demoDuration: '1:40',
+    demoWidth: 1512,
+    demoHeight: 982,
+    demoDuration: '0:37',
     includes: [
       '60 notes, 5 dashboards and a worked Chemistry example to copy from',
       'A mistake journal — one note per mistake, not per topic. This is the core of it.',
