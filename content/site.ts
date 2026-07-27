@@ -137,7 +137,7 @@ export const products: Product[] = [
     demoPoster: '/demo-poster.webp',
     demoWidth: 1512,
     demoHeight: 982,
-    demoDuration: '0:37',
+    demoDuration: '0:18',
     includes: [
       '60 notes, 5 dashboards and a worked Chemistry example to copy from',
       'A mistake journal — one note per mistake, not per topic. This is the core of it.',
