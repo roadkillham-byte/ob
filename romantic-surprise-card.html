@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>A Digital Surprise 🌸</title>
+<meta name="description" content="A little handmade card, just for you." />
+<meta name="theme-color" content="#FFF3F6" />
+
+<!-- Optional web fonts. If offline, the Georgia / system fallbacks below take over cleanly. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ==========================================================================
+   1. DESIGN TOKENS — change these to restyle the whole page
+   ========================================================================== */
+:root {
+  /* Palette */
+  --cream:      #FFF7F2;   /* base background */
+  --blush:      #FFE4EC;   /* soft pink wash */
+  --rose:       #F9C6D8;   /* mid rose */
+  --petal:      #F4A0BC;   /* stronger pink accent */
+  --mauve:      #C98FA8;   /* muted depth tone */
+  --gold:       #D8AE86;   /* warm metallic accent */
+  --ink:        #4B3340;   /* primary text (warm plum) */
+  --ink-soft:   #7A6070;   /* secondary text */
+
+  /* Card surface (glassmorphism) */
+  --glass-bg:     rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-blur:   22px;
+
+  /* Type */
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-body:    "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* Motion */
+  --ease-soft: cubic-bezier(0.22, 0.72, 0.18, 1);
+  --flip-time: 1s;
+
+  /* Shadows */
+  --shadow-rest:  0 18px 40px -22px rgba(120, 60, 85, 0.45), 0 2px 10px rgba(120, 60, 85, 0.06);
+  --shadow-hover: 0 34px 70px -28px rgba(120, 60, 85, 0.55), 0 4px 16px rgba(120, 60, 85, 0.10);
+}
+
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+* { box-sizing: border-box; }
+
+html { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;                  /* dodges mobile browser chrome */
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;                  /* the tilt/pop must never cause sideways scroll */
+  display: grid;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+}
+
+/* Soft, slowly shifting gradient field ----------------------------------- */
+.backdrop {
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  background:
+    radial-gradient(46% 40% at 18% 22%, var(--blush) 0%, transparent 62%),
+    radial-gradient(42% 38% at 82% 18%, #FFEFE2 0%, transparent 64%),
+    radial-gradient(52% 46% at 74% 82%, var(--rose) 0%, transparent 66%),
+    radial-gradient(46% 42% at 22% 84%, #F3E4F2 0%, transparent 62%),
+    linear-gradient(160deg, var(--cream) 0%, #FFEDF2 55%, #FDE7DD 100%);
+  animation: drift 26s var(--ease-soft) infinite alternate;
+  will-change: transform;
+}
+
+/* A faint vignette so the card always sits on a calm patch of colour */
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 55% at 50% 50%, rgba(255,255,255,0.55) 0%, transparent 70%);
+}
+
+@keyframes drift {
+  0%   { transform: translate3d(-1.5%, -1%, 0) scale(1.02); }
+  50%  { transform: translate3d(1.5%, 1.5%, 0) scale(1.06); }
+  100% { transform: translate3d(-1%, 2%, 0) scale(1.03); }
+}
+
+/* Flower canvas sits above the gradient, below the card ------------------ */
+#petals {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   3. THE CARD
+   ========================================================================== */
+.scene {
+  perspective: 1600px;
+  width: min(94vw, 560px);
+}
+
+/* Wrapper handles hover lift, pointer tilt and the "pop" on opening,
+   so it never fights the flip transform on .card itself. */
+.lift {
+  transform-style: preserve-3d;
+  transform: translateY(var(--lift, 0px)) rotateX(var(--tiltX, 0deg)) rotateY(var(--tiltY, 0deg));
+  transition: transform 0.6s var(--ease-soft);
+}
+.lift.is-popping { animation: pop 1s var(--ease-soft); }
+
+@keyframes pop {
+  0%   { scale: 1; }
+  38%  { scale: 1.055; }
+  100% { scale: 1; }
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  height: 300px;                        /* placeholder; JS measures the real height */
+  transform-style: preserve-3d;
+  transition:
+    transform var(--flip-time) var(--ease-soft),
+    height    var(--flip-time) var(--ease-soft);
+  cursor: pointer;
+  border-radius: 26px;
+  outline: none;
+}
+.card.is-open { transform: rotateY(180deg); cursor: default; }
+
+/* Focus ring is drawn on the visible face, not the 3D container */
+.card:focus-visible .face {
+  outline: 3px solid var(--petal);
+  outline-offset: 4px;
+}
+
+/* --- Faces --------------------------------------------------------------- */
+.face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 26px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-rest);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  overflow: hidden;
+  transition: box-shadow 0.6s var(--ease-soft);
+}
+
+/* Signature detail: a slow sheen that travels across the glass */
+.face::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.55) 50%, transparent 58%);
+  animation: sheen 9s var(--ease-soft) infinite;
+  pointer-events: none;
+}
+@keyframes sheen {
+  0%, 65% { transform: translateX(-70%); opacity: 0; }
+  72%     { opacity: 1; }
+  100%    { transform: translateX(70%); opacity: 0; }
+}
+
+.face--back { transform: rotateY(180deg); }
+
+/* Only the face currently showing is interactive / focusable */
+.card:not(.is-open) .face--back,
+.card.is-open .face--front {
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear calc(var(--flip-time) / 2);
+}
+
+.face__inner {
+  position: relative;
+  padding: clamp(30px, 6vw, 52px) clamp(24px, 5.5vw, 48px);
+  text-align: center;
+}
+
+.scene:hover .lift { --lift: -6px; }
+.scene:hover .face { box-shadow: var(--shadow-hover); }
+
+/* ==========================================================================
+   4. FACE CONTENT
+   ========================================================================== */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--mauve);
+  margin: 0 0 18px;
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--gold);
+  font-size: 0.95rem;
+  margin: 22px 0;
+}
+.ornament::before,
+.ornament::after {
+  content: "";
+  height: 1px;
+  width: clamp(38px, 16%, 78px);
+  background: linear-gradient(90deg, transparent, var(--rose), transparent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.08;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(2rem, 7.5vw, 3.1rem);
+  text-wrap: balance;
+}
+
+.title--reveal { font-size: clamp(2.3rem, 9vw, 3.7rem); }
+
+/* The heart keeps its own slow heartbeat */
+.heart {
+  display: inline-block;
+  animation: beat 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes beat {
+  0%, 70%, 100% { transform: scale(1); }
+  78%           { transform: scale(1.16); }
+  86%           { transform: scale(1.02); }
+}
+
+.lede {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 3.6vw, 1.35rem);
+  color: var(--ink-soft);
+  margin: 14px 0 0;
+  text-wrap: balance;
+}
+
+/* The letter itself reads left-aligned — centred prose over this many
+   lines is genuinely harder to read. Headings stay centred. */
+.body-copy {
+  font-size: clamp(0.95rem, 2.6vw, 1.03rem);
+  font-weight: 300;
+  line-height: 1.78;
+  color: var(--ink-soft);
+  margin: 0 auto 1.1em;
+  max-width: 44ch;
+  text-align: left;
+  text-wrap: pretty;
+}
+.body-copy:last-of-type { margin-bottom: 0; }
+
+.signature {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 3.4vw, 1.4rem);
+  color: var(--petal);
+  margin: 26px 0 0;
+}
+
+/* "Click to open" pill on the front face */
+.open-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 6px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--petal), var(--mauve));
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  box-shadow: 0 12px 26px -12px rgba(196, 96, 138, 0.85);
+  animation: breathe 3.4s var(--ease-soft) infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: translateY(0); box-shadow: 0 12px 26px -12px rgba(196, 96, 138, 0.85); }
+  50%      { transform: translateY(-4px); box-shadow: 0 20px 34px -14px rgba(196, 96, 138, 0.9); }
+}
+
+/* Small ghost button to close the card again */
+.reset {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mauve);
+  background: transparent;
+  border: 1px solid var(--rose);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.35s var(--ease-soft), color 0.35s var(--ease-soft), transform 0.35s var(--ease-soft);
+}
+.reset:hover { background: var(--blush); color: var(--ink); transform: translateY(-2px); }
+.reset:focus-visible { outline: 2px solid var(--petal); outline-offset: 3px; }
+
+/* Revealed lines rise into place, staggered by --d */
+.card.is-open .reveal {
+  animation: rise 0.75s var(--ease-soft) backwards;
+  animation-delay: calc(var(--flip-time) * 0.55 + var(--d, 0s));
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* ==========================================================================
+   5. ACCESSIBILITY — honour reduced-motion requests
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .backdrop, .face::before, .open-hint, .heart, .lift.is-popping { animation: none; }
+  .card, .lift, .face { transition-duration: 0.001s; }
+  .card.is-open .reveal { animation: none; }
+}
+</style>
+</head>
+
+<body>
+  <!-- Animated gradient field -->
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <!-- Floating flowers (ambient drift + celebratory burst) -->
+  <canvas id="petals" aria-hidden="true"></canvas>
+
+  <main class="scene">
+    <div class="lift" id="lift">
+      <div class="card" id="card" role="button" tabindex="0" aria-expanded="false"
+           aria-label="A digital surprise. Activate to open the card.">
+
+        <!-- ---------- FRONT: the closed card ---------- -->
+        <section class="face face--front">
+          <div class="face__inner" data-measure>
+            <p class="eyebrow" data-text="eyebrow">For you</p>
+            <h1 class="title" data-text="promptTitle">A digital surprise<br />for you&hellip;</h1>
+            <div class="ornament" aria-hidden="true">&#10047;</div>
+            <span class="open-hint" data-text="promptCta">Click to open 🌸</span>
+          </div>
+        </section>
+
+        <!-- ---------- BACK: the message ---------- -->
+        <section class="face face--back">
+          <div class="face__inner" data-measure>
+            <h2 class="title title--reveal reveal" style="--d:0s" data-text="revealTitle"></h2>
+            <p class="lede reveal" style="--d:0.09s" data-text="revealLede"></p>
+            <div class="ornament reveal" style="--d:0.16s" aria-hidden="true">&#10047;</div>
+            <div id="revealBody"></div>
+            <p class="signature reveal" style="--d:0.42s" data-text="signature"></p>
+            <button class="reset reveal" style="--d:0.5s" id="reset" type="button">Close the card</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+<script>
+/* ==========================================================================
+   CONFIG — everything you might want to change lives here
+   ========================================================================== */
+const CONFIG = {
+  /* --- Copy ------------------------------------------------------------ */
+  text: {
+    eyebrow:     "For you",
+    promptTitle: "A digital surprise<br />for you&hellip;",
+    promptCta:   "Click to open 🌸",
+
+    revealTitle: 'I Love You! <span class="heart">❤️</span>',
+    revealLede:  "…and I ran out of ways to say it in a text message.",
+
+    // Each string becomes its own paragraph. Add or remove freely.
+    revealBody: [
+      "So I built you a small corner of the internet instead — one that exists for exactly one reason, which is you.",
+      "Thank you for the ordinary days. The coffee made without being asked. The music played a little too loud. The way you start laughing half a second before the joke actually lands. Those are the parts I'd choose again, in any order, for as long as you'll have me.",
+      "You are my favourite person. Today, tomorrow, and every quiet, unremarkable, perfect day after it."
+    ],
+
+    signature: "— all my love, always"
+  },
+
+  /* --- Flowers ---------------------------------------------------------- */
+  flowers: ["🌸", "🌹", "🌺", "🌷", "💐", "🏵️"],
+
+  ambientDensity: 30000,  // one drifting flower per N px² of screen (lower = more)
+  ambientMax:     46,     // hard cap on drifting flowers
+  burstCount:     70,     // flowers thrown outward when the card opens
+  rainCount:      34      // extra flowers dropped from above on opening
+};
+
+/* ==========================================================================
+   Fill the markup from CONFIG
+   ========================================================================== */
+document.querySelectorAll("[data-text]").forEach(el => {
+  const value = CONFIG.text[el.dataset.text];
+  if (value != null) el.innerHTML = value;
+});
+
+document.getElementById("revealBody").innerHTML = CONFIG.text.revealBody
+  .map((p, i) => `<p class="body-copy reveal" style="--d:${0.22 + i * 0.07}s">${p}</p>`)
+  .join("");
+
+/* ==========================================================================
+   FLOWER PARTICLE SYSTEM (canvas)
+   Two populations share one loop: `ambient` drifts down forever,
+   `burst` is spawned on open and fades out.
+   ========================================================================== */
+const canvas = document.getElementById("petals");
+const ctx = canvas.getContext("2d");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let W = 0, H = 0;
+let ambient = [];
+let burst = [];
+
+const rand = (min, max) => min + Math.random() * (max - min);
+const pick = arr => arr[(Math.random() * arr.length) | 0];
+
+/* One gently falling flower */
+function makeAmbient() {
+  const size = rand(16, 38);
+  return {
+    glyph: pick(CONFIG.flowers),
+    baseX: rand(-40, W + 40),
+    x: 0,                              // recomputed each frame from baseX + sway
+    y: rand(-size, H),
+    size,
+    fall: rand(0.018, 0.055) * size,   // bigger flowers read as closer, so they fall faster
+    swayAmp: rand(14, 46),
+    swaySpeed: rand(0.0004, 0.0012),
+    phase: rand(0, Math.PI * 2),
+    rot: rand(0, Math.PI * 2),
+    spin: rand(-0.0008, 0.0008),
+    alpha: rand(0.4, 0.9)
+  };
+}
+
+/* A flower thrown outward from a point (used on open) */
+function makeBurst(originX, originY) {
+  const angle = rand(0, Math.PI * 2);
+  const speed = rand(0.18, 0.62);
+  const size = rand(18, 42);
+  return {
+    glyph: pick(CONFIG.flowers),
+    x: originX,
+    y: originY,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed - rand(0.05, 0.3),   // bias upward so it arcs
+    size,
+    rot: rand(0, Math.PI * 2),
+    spin: rand(-0.004, 0.004),
+    life: 1,
+    decay: rand(0.00018, 0.00042)
+  };
+}
+
+/* Extra flowers dropped in from above the viewport when the card opens.
+   They live in the burst array, so they use burst-shaped fields. */
+function makeRain() {
+  const size = rand(16, 40);
+  return {
+    glyph: pick(CONFIG.flowers),
+    x: rand(-30, W + 30),
+    y: rand(-H * 0.7, -size),
+    vx: rand(-0.05, 0.05),
+    vy: rand(0.05, 0.16),
+    size,
+    rot: rand(0, Math.PI * 2),
+    spin: rand(-0.002, 0.002),
+    life: 1,
+    decay: 0.00012
+  };
+}
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // Rebuild the ambient field to match the new screen size.
+  // With reduced motion we keep a handful of flowers but never animate them.
+  const density = reduceMotion ? CONFIG.ambientDensity * 3 : CONFIG.ambientDensity;
+  const target = Math.min(CONFIG.ambientMax, Math.round((W * H) / density));
+  ambient = Array.from({ length: target }, () => makeAmbient());
+  if (reduceMotion) drawStatic();
+}
+
+/* A single still frame — used when the visitor prefers reduced motion */
+function drawStatic() {
+  ctx.clearRect(0, 0, W, H);
+  for (const p of ambient) {
+    p.x = p.baseX;
+    draw(p, p.alpha * 0.7);
+  }
+}
+
+function draw(p, alpha) {
+  if (alpha <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.rot);
+  ctx.font = p.size + "px serif";
+  ctx.fillText(p.glyph, 0, 0);
+  ctx.restore();
+}
+
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(now - last, 48);   // clamp so a backgrounded tab doesn't teleport everything
+  last = now;
+  ctx.clearRect(0, 0, W, H);
+
+  // --- drifting flowers -------------------------------------------------
+  for (const p of ambient) {
+    p.phase += p.swaySpeed * dt;
+    p.y += p.fall * dt * 0.06;
+    p.rot += p.spin * dt;
+
+    if (p.y - p.size > H) {              // recycle back to the top
+      p.y = -p.size;
+      p.baseX = rand(-40, W + 40);
+    }
+    p.x = p.baseX + Math.sin(p.phase) * p.swayAmp;
+    draw(p, p.alpha);
+  }
+
+  // --- celebratory burst ------------------------------------------------
+  for (let i = burst.length - 1; i >= 0; i--) {
+    const p = burst[i];
+    p.vy += 0.00055 * dt;                // gravity
+    p.vx *= 0.995;                       // air drag
+    p.vy *= 0.997;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.rot += p.spin * dt;
+    p.life -= p.decay * dt;
+
+    if (p.life <= 0 || p.y - p.size > H + 60) burst.splice(i, 1);
+    else draw(p, Math.min(1, p.life * 1.4));
+  }
+
+  requestAnimationFrame(frame);
+}
+
+window.addEventListener("resize", resize);
+resize();
+if (!reduceMotion) requestAnimationFrame(frame);
+
+/* ==========================================================================
+   CARD: height matching, flip, tilt
+   ========================================================================== */
+const card  = document.getElementById("card");
+const lift  = document.getElementById("lift");
+const reset = document.getElementById("reset");
+const [frontInner, backInner] = document.querySelectorAll("[data-measure]");
+
+/* Both faces are absolutely positioned, so the card has no natural height.
+   We measure whichever face is showing and animate .card to that height. */
+function syncHeight() {
+  const target = card.classList.contains("is-open") ? backInner : frontInner;
+  card.style.height = target.offsetHeight + "px";
+}
+
+if ("ResizeObserver" in window) {
+  const ro = new ResizeObserver(syncHeight);
+  ro.observe(frontInner);
+  ro.observe(backInner);
+}
+window.addEventListener("resize", syncHeight);
+// Fonts land after first paint and change the measurement, so re-sync.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeight);
+syncHeight();
+
+function openCard() {
+  if (card.classList.contains("is-open")) return;
+  card.classList.add("is-open");
+  card.setAttribute("aria-expanded", "true");
+  syncHeight();
+
+  // Pop the card, then celebrate
+  lift.classList.remove("is-popping");
+  void lift.offsetWidth;                 // restart the animation
+  lift.classList.add("is-popping");
+
+  if (!reduceMotion) {
+    const box = card.getBoundingClientRect();
+    const cx = box.left + box.width / 2;
+    const cy = box.top + box.height / 2;
+    for (let i = 0; i < CONFIG.burstCount; i++) burst.push(makeBurst(cx, cy));
+    for (let i = 0; i < CONFIG.rainCount; i++) burst.push(makeRain());
+  }
+
+  // Move focus to the message so screen readers and keyboards follow along
+  setTimeout(() => reset.focus({ preventScroll: true }), 700);
+}
+
+function closeCard() {
+  card.classList.remove("is-open");
+  card.setAttribute("aria-expanded", "false");
+  syncHeight();
+  card.focus({ preventScroll: true });
+}
+
+card.addEventListener("click", openCard);
+card.addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    openCard();
+  }
+});
+
+reset.addEventListener("click", e => {
+  e.stopPropagation();                   // don't let the click re-open the card
+  closeCard();
+});
+
+/* --- Subtle pointer tilt (desktop / precise pointers only) --------------- */
+if (!reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  const scene = document.querySelector(".scene");
+  const MAX_TILT = 6;                    // degrees
+
+  scene.addEventListener("pointermove", e => {
+    const box = scene.getBoundingClientRect();
+    const dx = (e.clientX - (box.left + box.width / 2)) / (box.width / 2);
+    const dy = (e.clientY - (box.top + box.height / 2)) / (box.height / 2);
+    lift.style.setProperty("--tiltY", (dx * MAX_TILT).toFixed(2) + "deg");
+    lift.style.setProperty("--tiltX", (-dy * MAX_TILT).toFixed(2) + "deg");
+  });
+
+  scene.addEventListener("pointerleave", () => {
+    lift.style.setProperty("--tiltY", "0deg");
+    lift.style.setProperty("--tiltX", "0deg");
+  });
+}
+</script>
+</body>
+</html>
