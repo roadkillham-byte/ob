@@ -27,6 +27,20 @@ npm run lint      # tsc --noEmit
   numeric readout.
 - `src/App.tsx` — the five input sections plus the sticky output block.
 
+## Deploying to Vercel
+
+This app is a separate build from the Next.js site at the repo root, so it
+needs its own Vercel project:
+
+1. Vercel dashboard → **Add New Project** → import `roadkillham-byte/ob`
+   again (a repo can back more than one Vercel project).
+2. Set **Root Directory** to `coffee-van-calculator`.
+3. Framework preset **Vite** is picked up from `vercel.json` in this
+   folder; build command, output directory (`dist`), and install command
+   are all pinned there too.
+4. Deploy. Every push to the connected branch redeploys this project
+   independently of the root site's project.
+
 ## Notes on defaults
 
 Every slider defaults to either a stated assumption (price per cup $5.50,
